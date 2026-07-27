@@ -1,6 +1,5 @@
 .venv
 .env
-/data
 .idea
 mlartifacts/
 mlflow.db
