@@ -1,0 +1,50 @@
+# =============================================================================
+# Stack local: API de Churn + Prometheus
+# =============================================================================
+# Uso: docker compose up --build
+# API:        http://localhost:8000/docs
+# Prometheus: http://localhost:9090
+# =============================================================================
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: api-churn
+    ports:
+      - "8000:8000"
+    environment:
+      APP_ENV: development
+      LOG_LEVEL: INFO
+      SECRET_KEY: dev-secret-key-change-me-in-production-32bytes
+      ALGORITHM: HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES: "30"
+      RATE_LIMIT_DEFAULT: "60/minute"
+      RATE_LIMIT_PREDICT: "30/minute"
+      RATE_LIMIT_BATCH: "10/minute"
+      RATE_LIMIT_LOGIN: "10/minute"
+      MODEL_PATH: models/champion_model.joblib
+      MODEL_VERSION: "1.0.0"
+      METRICS_ENABLED: "true"
+      CORS_ORIGINS: "*"
+      DEMO_USER: admin
+      DEMO_PASSWORD: secret123
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  prometheus:
+    build:
+      context: ./prometheus
+      dockerfile: Dockerfile
+    container_name: prometheus-churn
+    ports:
+      - "9090:9090"
+    environment:
+      API_TARGET: api:8000
+      API_SCHEME: http
+      SCRAPE_INTERVAL: 15s
+    depends_on:
+      - api

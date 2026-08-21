@@ -1,0 +1,14 @@
+# Dependencias minimas para RODAR a API em producao (imagem Docker).
+# Para desenvolvimento (notebooks, MLflow, EDA), use requirements.txt.
+fastapi==0.140.0
+uvicorn[standard]==0.51.0
+pydantic==2.13.4
+scikit-learn==1.9.0
+pandas==2.3.3
+numpy==2.5.1
+joblib==1.5.3
+PyJWT==2.13.0
+slowapi==0.1.10
+python-json-logger==4.2.0
+prometheus-client==0.26.0
+python-multipart==0.0.32
