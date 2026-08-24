@@ -98,3 +98,23 @@ services:
         value: "https"
       - key: SCRAPE_INTERVAL
         value: "15s"
+
+  # ===========================================================================
+  # WEB SERVICE - Grafana (dashboards para as metricas coletadas pelo Prometheus)
+  # ===========================================================================
+  - type: web
+    name: grafana-churn
+    runtime: docker
+    region: ohio
+    plan: free
+    dockerContext: ./grafana
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: PROMETHEUS_URL
+        value: "https://prometheus-churn.onrender.com"
+      - key: GF_SECURITY_ADMIN_USER
+        value: "admin"
+      - key: GF_SECURITY_ADMIN_PASSWORD
+        generateValue: true
+      - key: GF_SERVER_ROOT_URL
+        value: "https://grafana-churn.onrender.com"
