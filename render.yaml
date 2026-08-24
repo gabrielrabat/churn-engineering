@@ -1,0 +1,120 @@
+# =============================================================================
+# RENDER BLUEPRINT - API de Predicao de Churn
+# =============================================================================
+#
+# Para deploy:
+# 1. Conecte o repositorio ao Render (https://dashboard.render.com)
+# 2. Selecione este arquivo como Blueprint
+# 3. O Render cria os servicos abaixo automaticamente
+# =============================================================================
+
+services:
+  # ===========================================================================
+  # WEB SERVICE - API de Inferencia
+  # ===========================================================================
+  - type: web
+    name: api-churn
+    runtime: docker
+    region: ohio
+    # free: ideal para desenvolvimento/aprendizado.
+    plan: free
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /health
+    envVars:
+      # -----------------------------------------------------------------------
+      # Aplicacao
+      # -----------------------------------------------------------------------
+      - key: APP_ENV
+        value: production
+      - key: LOG_LEVEL
+        value: INFO
+
+      # -----------------------------------------------------------------------
+      # Seguranca - JWT
+      # -----------------------------------------------------------------------
+      - key: SECRET_KEY
+        generateValue: true  # Render gera automaticamente (32+ bytes)
+      - key: ALGORITHM
+        value: HS256
+      - key: ACCESS_TOKEN_EXPIRE_MINUTES
+        value: "30"
+
+      # -----------------------------------------------------------------------
+      # Rate Limiting
+      # -----------------------------------------------------------------------
+      - key: RATE_LIMIT_DEFAULT
+        value: "60/minute"
+      - key: RATE_LIMIT_PREDICT
+        value: "30/minute"
+      - key: RATE_LIMIT_BATCH
+        value: "10/minute"
+      - key: RATE_LIMIT_LOGIN
+        value: "10/minute"
+
+      # -----------------------------------------------------------------------
+      # Modelo
+      # -----------------------------------------------------------------------
+      - key: MODEL_PATH
+        value: "models/champion_model.joblib"
+      - key: MODEL_VERSION
+        value: "1.0.0"
+
+      # -----------------------------------------------------------------------
+      # Metricas (plano free nao roda o Prometheus deste blueprint; as
+      # metricas continuam expostas em /metrics para scrape manual/externo)
+      # -----------------------------------------------------------------------
+      - key: METRICS_ENABLED
+        value: "true"
+
+      # -----------------------------------------------------------------------
+      # CORS - em producao real, restrinja aos dominios do frontend
+      # -----------------------------------------------------------------------
+      - key: CORS_ORIGINS
+        value: "*"
+
+      # -----------------------------------------------------------------------
+      # Usuario de demo (trocar por um banco de usuarios em producao real)
+      # -----------------------------------------------------------------------
+      - key: DEMO_USER
+        value: "admin"
+      - key: DEMO_PASSWORD
+        generateValue: true
+
+  # ===========================================================================
+  # WEB SERVICE - Prometheus (scrape de metricas da API publica)
+  # ===========================================================================
+  - type: web
+    name: prometheus-churn
+    runtime: docker
+    region: ohio
+    plan: free
+    dockerContext: ./prometheus
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: API_TARGET
+        value: "api-churn.onrender.com"
+      - key: API_SCHEME
+        value: "https"
+      - key: SCRAPE_INTERVAL
+        value: "15s"
+
+  # ===========================================================================
+  # WEB SERVICE - Grafana (dashboards para as metricas coletadas pelo Prometheus)
+  # ===========================================================================
+  - type: web
+    name: grafana-churn
+    runtime: docker
+    region: ohio
+    plan: free
+    dockerContext: ./grafana
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: PROMETHEUS_URL
+        value: "https://prometheus-churn.onrender.com"
+      - key: GF_SECURITY_ADMIN_USER
+        value: "admin"
+      - key: GF_SECURITY_ADMIN_PASSWORD
+        generateValue: true
+      - key: GF_SERVER_ROOT_URL
+        value: "https://grafana-churn.onrender.com"

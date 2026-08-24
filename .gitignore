@@ -3,3 +3,8 @@
 .idea
 mlartifacts/
 mlflow.db
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/

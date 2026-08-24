@@ -1,0 +1,32 @@
+# =============================================================================
+# Regras de alerta - API de Predicao de Churn
+# =============================================================================
+groups:
+  - name: api-churn
+    rules:
+      - alert: APIDown
+        expr: up{job="api-churn"} == 0
+        for: 1m
+        labels:
+          severity: critical
+        annotations:
+          summary: "API de churn fora do ar"
+          description: "O Prometheus nao consegue fazer scrape de /metrics ha mais de 1 minuto."
+
+      - alert: HighRateLimitRejections
+        expr: increase(churn_rate_limit_exceeded_total[5m]) > 20
+        for: 0m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Muitas requisicoes bloqueadas por rate limit"
+          description: "Mais de 20 requisicoes bloqueadas nos ultimos 5 minutos. Possivel abuso ou limite mal configurado."
+
+      - alert: HighPredictionLatency
+        expr: histogram_quantile(0.95, rate(churn_prediction_latency_seconds_bucket[5m])) > 1
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "Latencia de predicao alta (p95 > 1s)"
+          description: "O p95 de latencia de /predict esta acima de 1 segundo nos ultimos 5 minutos."

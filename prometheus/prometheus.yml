@@ -1,0 +1,19 @@
+# =============================================================================
+# Configuracao do Prometheus - desenvolvimento local (docker-compose)
+# =============================================================================
+# Em producao (Render), o arquivo efetivo eh gerado a partir de
+# prometheus.yml.template pelo entrypoint.sh, usando variaveis de ambiente.
+# =============================================================================
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  - "alerts.yml"
+
+scrape_configs:
+  - job_name: "api-churn"
+    scheme: http
+    metrics_path: /metrics
+    static_configs:
+      - targets: ["api:8000"]
