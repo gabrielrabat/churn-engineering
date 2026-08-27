@@ -10,12 +10,12 @@ import logging
 import sys
 from datetime import datetime, timezone
 
-from pythonjsonlogger import jsonlogger
+from pythonjsonlogger import json
 
 from src.api.core import LOG_LEVEL
 
 
-class CustomJsonFormatter(jsonlogger.JsonFormatter):
+class CustomJsonFormatter(json.JsonFormatter):
     """Adiciona timestamp, level, service e logger a cada registro de log."""
 
     def add_fields(self, log_record, record, message_dict):

@@ -78,6 +78,7 @@ docker compose up --build
 
 - API: `http://localhost:8000/docs`
 - Prometheus: `http://localhost:9090`
+- Grafana: `http://localhost:3000`
 
 ## Usando a API
 
