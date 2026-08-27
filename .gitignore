@@ -2,6 +2,7 @@
 .env
 .idea
 mlartifacts/
+mlruns/
 mlflow.db
 
 # Python
