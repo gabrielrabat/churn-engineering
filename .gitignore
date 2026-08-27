@@ -8,3 +8,6 @@ mlflow.db
 __pycache__/
 *.py[cod]
 .pytest_cache/
+
+# Pytest 
+.coverage
