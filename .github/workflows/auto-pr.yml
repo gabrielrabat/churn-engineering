@@ -1,0 +1,41 @@
+name: Auto PR
+
+on:
+  push:
+    branches-ignore: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  test-and-open-pr:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+          cache-dependency-path: requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run tests
+        run: pytest -q
+
+      - name: Abrir PR para main
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          existing_pr=$(gh pr list --base main --head "${{ github.ref_name }}" --state open --json number --jq '.[0].number')
+          if [ -z "$existing_pr" ]; then
+            gh pr create --base main --head "${{ github.ref_name }}" --fill
+          else
+            echo "PR #$existing_pr já existe para essa branch, nada a fazer."
+          fi
