@@ -8,11 +8,13 @@ uma unica vez na inicializacao e expoe endpoints de autenticacao, predicao
 from __future__ import annotations
 
 from contextlib import asynccontextmanager
+from typing import cast
 
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from slowapi.errors import RateLimitExceeded
 from slowapi.middleware import SlowAPIMiddleware
+from starlette.types import ExceptionHandler
 
 from src.api.core import APP_NAME, CORS_ORIGINS, MODEL_PATH, MODEL_VERSION
 from src.api.logging_config import logger
@@ -54,7 +56,7 @@ app = FastAPI(
 
 # --- Rate limiting ---
 app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, rate_limit_exceeded_handler)
+app.add_exception_handler(RateLimitExceeded, cast(ExceptionHandler, rate_limit_exceeded_handler))
 app.add_middleware(SlowAPIMiddleware)
 
 # --- Logging + trace_id ---

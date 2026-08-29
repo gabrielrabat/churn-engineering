@@ -78,6 +78,7 @@ docker compose up --build
 
 - API: `http://localhost:8000/docs`
 - Prometheus: `http://localhost:9090`
+- Grafana: `http://localhost:3000`
 
 ## Usando a API
 
@@ -134,8 +135,16 @@ CORS, credenciais de demonstração etc.).
 
 ## Testes
 
-Ainda não implementados — ver [`tests/README.md`](tests/README.md) para o
-que está planejado (pytest).
+Testes automatizados com `pytest` já estão implementados (unitários e de API)
+no diretório [`tests/`](tests/).
+
+Para executar:
+
+```bash
+pytest -q
+```
+
+Estado atual da suíte: **77 testes passando**.
 
 ## Deploy (opcional)
 

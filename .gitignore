@@ -2,9 +2,13 @@
 .env
 .idea
 mlartifacts/
+mlruns/
 mlflow.db
 
 # Python
 __pycache__/
 *.py[cod]
 .pytest_cache/
+
+# Pytest 
+.coverage
