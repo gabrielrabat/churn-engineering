@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 from pathlib import Path
 
 import joblib
@@ -11,7 +12,7 @@ from src.model_loader import load_model
 def test_load_model_raises_file_not_found_for_missing_path(tmp_path):
     missing_path = tmp_path / "does_not_exist.joblib"
 
-    with pytest.raises(FileNotFoundError, match=str(missing_path)):
+    with pytest.raises(FileNotFoundError, match=re.escape(str(missing_path))):
         load_model(missing_path)
 
 
