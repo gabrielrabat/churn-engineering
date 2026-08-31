@@ -90,7 +90,7 @@ services:
     region: ohio
     plan: free
     dockerContext: ./prometheus
-    dockerfilePath: ./Dockerfile
+    dockerfilePath: ./prometheus/Dockerfile
     envVars:
       - key: API_TARGET
         value: "api-churn.onrender.com"
@@ -108,7 +108,7 @@ services:
     region: ohio
     plan: free
     dockerContext: ./grafana
-    dockerfilePath: ./Dockerfile
+    dockerfilePath: ./grafana/Dockerfile
     envVars:
       - key: PROMETHEUS_URL
         value: "https://prometheus-churn.onrender.com"
