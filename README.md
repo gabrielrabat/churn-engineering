@@ -37,7 +37,7 @@ churn_engineering/
 ├── notebooks/                   # EDA e comparação de modelos (experimentação)
 ├── docs/
 │   └── model_card.md            # Performance, limitações e vieses do modelo
-├── tests/                       # Testes automatizados (pendente, ver tests/README.md)
+├── tests/                       # Testes automatizados (unitários + API, pytest)
 ├── Dockerfile                   # Imagem da API (produção)
 ├── requirements-api.txt         # Dependências mínimas para rodar a API
 ├── requirements.txt              # Dependências completas de desenvolvimento
