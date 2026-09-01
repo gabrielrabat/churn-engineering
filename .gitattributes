@@ -1,0 +1,7 @@
+# Scripts executados dentro de containers Linux precisam manter LF, mesmo
+# quando clonados/commitados no Windows (core.autocrlf converteria para
+# CRLF e quebraria o shebang, ex.: "#!/bin/sh\r" -> "no such file or directory").
+*.sh text eol=lf
+Dockerfile text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf

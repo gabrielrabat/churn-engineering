@@ -4,6 +4,18 @@ API REST para predição de propensão de churn de clientes de telecomunicaçõe
 construída sobre um modelo `RandomForestClassifier` (Scikit-Learn) e servida
 com FastAPI.
 
+## API em produção
+
+Deploy ao vivo no Render (plano free — o primeiro request após um período de
+inatividade pode demorar alguns segundos para "acordar" o serviço):
+
+- **API (Swagger):** https://api-churn-me0q.onrender.com/docs
+- **Prometheus:** https://prometheus-churn.onrender.com
+- **Grafana:** https://grafana-churn.onrender.com
+
+Credenciais de demonstração (`/auth/login` e login do Grafana): geradas
+automaticamente pelo Render no deploy — ver [Variáveis de ambiente](#variáveis-de-ambiente).
+
 ## Contexto
 
 Uma operadora de telecomunicações está perdendo clientes em ritmo acelerado.
@@ -78,7 +90,7 @@ docker compose up --build
 
 - API: `http://localhost:8000/docs`
 - Prometheus: `http://localhost:9090`
-- Grafana: `http://localhost:3000`
+- Grafana: `http://localhost:3000` (login: `admin` / `admin`)
 
 ## Usando a API
 
@@ -146,8 +158,24 @@ pytest -q
 
 Estado atual da suíte: **77 testes passando**.
 
-## Deploy (opcional)
+## CI/CD (GitHub Actions)
 
-Blueprint pronto em [`render.yaml`](render.yaml) para deploy no
-[Render](https://render.com): sobe a API e uma instância de Prometheus
-apontando para o endpoint público `/metrics`.
+Dois workflows em [`.github/workflows/`](.github/workflows/):
+
+- **[`tests.yml`](.github/workflows/tests.yml)** — roda a suíte `pytest` a
+  cada push e pull request para `main`. É o gate que garante que só chega
+  código com os testes passando.
+- **[`auto-pr.yml`](.github/workflows/auto-pr.yml)** — a cada push numa
+  branch diferente de `main`, roda os testes e, se passarem, abre
+  automaticamente um Pull Request para `main` (ou reaproveita um PR já
+  aberto para aquela branch, se existir).
+
+## Deploy em produção
+
+Blueprint em [`render.yaml`](render.yaml) para deploy no
+[Render](https://render.com), com 3 serviços Docker: a API (`api-churn`),
+Prometheus (`prometheus-churn`, fazendo scrape de `/metrics`) e Grafana
+(`grafana-churn`, com um dashboard pré-provisionado em
+[`grafana/provisioning/dashboards/`](grafana/provisioning/dashboards/)).
+Links ao vivo em [API em produção](#api-em-produção).
+
