@@ -93,7 +93,7 @@ services:
     dockerfilePath: ./prometheus/Dockerfile
     envVars:
       - key: API_TARGET
-        value: "api-churn.onrender.com"
+        value: "api-churn-me0q.onrender.com"
       - key: API_SCHEME
         value: "https"
       - key: SCRAPE_INTERVAL
